@@ -2,10 +2,6 @@ import sys
 import math
 from array import array
 
-# Auto-generated code below aims at helping you parse
-# the standard input according to the problem statement.
-
-#TODO use abstract class to define cells that can not be entered (holes). MAYBE
 class Cell:
     def __init__(self, x, y, map_input):
         self.x = x
@@ -22,8 +18,6 @@ class Cell:
     def is_walkable(self):
         return self.height >= 0
     
-
-
 #TODO SMART WAY OF STORING ACTION VALUES
 class Action:
     def __init__(self, action_type, unit_index, move_dir, build_dir):
@@ -105,7 +99,6 @@ def main():
     while True:
         game.read_game_data()
         print("MOVE&BUILD 0 N S")
-
 
 if __name__ == '__main__':
     main()
