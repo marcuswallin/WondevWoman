@@ -1,9 +1,11 @@
 import sys
 import math
 import random
+import copy
 from array import array
 from enum import Enum
 
+#TODO change inte 2D enums
 class Dir(Enum):
     N = 1
     NE = 2
@@ -12,7 +14,31 @@ class Dir(Enum):
     S = 5 
     SW = 6 
     W = 7 
-    NW = 8 
+    NW = 8
+    
+    def to_string(self):
+        return self.name
+
+    @classmethod
+    def convert_direction_string_to_enum(cls, direction):
+        if direction == 'N':
+            return_dir = cls.N
+        elif direction == 'NE':
+            return_dir = cls.NE
+        elif direction == 'E':
+            return_dir = cls.E
+        elif direction == 'SE':
+            return_dir = cls.SE
+        elif direction == 'S':
+            return_dir = cls.S
+        elif direction == 'SW':
+            return_dir = cls.SW
+        elif direction == 'W':
+            return_dir = cls.W
+        else:
+            return_dir = cls.NW
+        return return_dir
+
 
 class Position:
     def __init__(self, init_x, init_y):
@@ -40,13 +66,20 @@ class Cell:
 #TODO SMART WAY OF STORING ACTION VALUES
 class Action:
     def __init__(self, unit_index, move_dir, build_dir):
-        self.unit_index = unit_index
-        self.move_dir = move_dir
-        self.build_dir = build_dir
+        self.unit_index = int(unit_index)
+        self.move_dir = Dir.convert_direction_string_to_enum(move_dir)
+        self.build_dir = Dir.convert_direction_string_to_enum(build_dir)
+
 
 class MoveAndBuild(Action):
-  def __init__(self, unit_index, move_dir, build_dir):
-    super().__init__(unit_index, move_dir, build_dir)
+    def __init__(self, unit_index, move_dir, build_dir):
+        super().__init__(unit_index, move_dir, build_dir)
+    
+    #I feel like this is unnecessary duplication
+    def to_string(self):
+        return f'MOVE&BUILD {self.unit_index} ' + \
+        f'{self.move_dir.to_string()} {self.build_dir.to_string()}'
+
 
 class Unit:
     def __init__(self, init_pos):
@@ -70,8 +103,8 @@ class Map:
     def clean(self):
         self.cells = []
 
-    def get_height(self, x, y):
-        return self.cells[y][x].height
+    def get_height(self, position):
+        return self.cells[position.y][position.x].height
     
     def update_data(self):
         for y_index in range(self.size):
@@ -115,6 +148,8 @@ class Game:
         for i in range(legal_actions):
             atype, index, dir_1, dir_2 = input().split()
             index = int(index)
+            if atype == "MOVE&BUILD":
+                self.me.actions.append(MoveAndBuild(index, dir_1, dir_2))
 
     def clean_old_data(self):
         self.me.clean()
@@ -123,12 +158,24 @@ class Game:
 
 class GameSimulator:
     
-    def return_random_valid_action(self, player):
-        try:
-            return random.choice(player.actions)
-        except IndexError:
-            print("I CAN NOT MOVE", file=sys.stderr)
-       #     return 
+    def __init__(self):
+        self.map = Map(0)
+    
+    def copy_map(self, map):
+        self.map.size = map.size
+        self.map.cells = []
+        for y, row in enumerate(map.cells):
+            self.map.cells.append([])
+            for cell in row:
+                self.map.cells[y].append(copy.deepcopy(cell))  
+
+
+    
+    def move_up_or_random(self, player):
+        current_height = self.map.get_height(player.units[0].position)
+
+        return random.choice(player.actions)
+
 
 
 def main():
@@ -139,8 +186,9 @@ def main():
     while True:
         game.clean_old_data()
         game.read_game_data()
-        action = simulator.return_random_valid_action(game.me)
-        print("MOVE&BUILD 0 N S")
+        simulator.copy_map(game.map)
+        action = simulator.move_up_or_random(game.me)
+        print(action.to_string())
 
 if __name__ == '__main__':
     main()

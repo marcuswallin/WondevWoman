@@ -1,11 +1,7 @@
 import pytest
 import sys
-<<<<<<< HEAD
 import random
-from wondevwoman import Cell, Game, Map, Position
-=======
-from wondevwoman import Cell, Game, Map, Position, Dir
->>>>>>> 42c1c229ade98015e46b8e80f644d29b1172820d
+from wondevwoman import GameSimulator, Cell, Game, Map, Position, Dir, MoveAndBuild
 
 def test_simple_position_init():
     pos = Position(5, 3)
@@ -58,13 +54,6 @@ class GameTest:
         self.loop_input_file = new_file
         self.update_loop_data_from_file()
 
-def test_simple_point_init():
-    cell = Cell(1,2,0)
-    assert cell.x == 1
-    assert cell.y == 2
-    assert cell.height == 0
-
-
 def test_game_init():
     game = Game()
     assert game.map.size == 0
@@ -77,19 +66,19 @@ def test_file_init_game_simple():
 
     game_test.update_loop_data_from_file()
     curr_map = game_test.game.map
-    assert curr_map.get_height(0,0) == 0
-    assert curr_map.get_height(1,0) == 0
-    assert curr_map.get_height(2,0) == 1
-    assert curr_map.get_height(3,0) == 0
-    assert curr_map.get_height(4,0) == -1
-    assert curr_map.get_height(5,0) == -1
-    assert curr_map.get_height(0,4) == 0
-    assert curr_map.get_height(1,4) == 0
-    assert curr_map.get_height(2,4) == 1
-    assert curr_map.get_height(3,4) == 0
-    assert curr_map.get_height(4,4) == 2
-    assert curr_map.get_height(5,4) == 0
-    assert curr_map.get_height(5,5) == 0
+    assert curr_map.get_height(Position(0,0)) == 0
+    assert curr_map.get_height(Position(1,0)) == 0
+    assert curr_map.get_height(Position(2,0)) == 1
+    assert curr_map.get_height(Position(3,0)) == 0
+    assert curr_map.get_height(Position(5,0)) == -1
+    assert curr_map.get_height(Position(4,0)) == -1
+    assert curr_map.get_height(Position(0,4)) == 0
+    assert curr_map.get_height(Position(1,4)) == 0
+    assert curr_map.get_height(Position(2,4)) == 1
+    assert curr_map.get_height(Position(3,4)) == 0
+    assert curr_map.get_height(Position(4,4)) == 2
+    assert curr_map.get_height(Position(5,4)) == 0
+    assert curr_map.get_height(Position(5,5)) == 0
 
     assert game_test.game.me.nr_units == 1
     assert game_test.game.opponent.nr_units == 1
@@ -101,10 +90,10 @@ def test_player_actions():
     game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
     game_test.update_loop_data_from_file()
 
-    assert game_test.me.actions.index == 0
-    assert game_test.game.me.actions.move_dir == Dir.N 
-    assert game_test.game.me.actions.build_dir == Dir.S 
-    assert game_test.game.me.actions == MoveAndBuild(0, 'N', 'S')
+    assert game_test.game.me.actions[0].unit_index == 0
+    assert game_test.game.me.actions[0].move_dir == Dir.N 
+    assert game_test.game.me.actions[0].build_dir == Dir.S 
+    assert isinstance(game_test.game.me.actions[0], MoveAndBuild)
 
 
 def test_game_update():
@@ -114,22 +103,45 @@ def test_game_update():
 
     game_test.update_loop_data_from_file()
     curr_map = game_test.game.map
-    assert curr_map.get_height(0,2) == 0
-    assert curr_map.get_height(1,2) == 0
-    assert curr_map.get_height(2,2) == 1
-    assert curr_map.get_height(3,2) == 0
-    assert curr_map.get_height(4,2) == 0
-    assert curr_map.get_height(5,2) == 0
+    assert curr_map.get_height(Position(0,2)) == 0
+    assert curr_map.get_height(Position(1,2)) == 0
+    assert curr_map.get_height(Position(2,2)) == 1
+    assert curr_map.get_height(Position(3,2)) == 0
+    assert curr_map.get_height(Position(4,2)) == 0
+    assert curr_map.get_height(Position(5,2)) == 0
     assert game_test.verify_correct_nr_player_units()
 
     game_test.new_game_loop("wondev_test_files/loop_size6unit1_2.txt")
-    assert curr_map.get_height(0,2) == 1
-    assert curr_map.get_height(1,2) == 0
-    assert curr_map.get_height(2,2) == 2
-    assert curr_map.get_height(3,2) == 0
-    assert curr_map.get_height(4,2) == 1
-    assert curr_map.get_height(5,2) == 0
+    assert curr_map.get_height(Position(0,2)) == 1
+    assert curr_map.get_height(Position(1,2)) == 0
+    assert curr_map.get_height(Position(2,2)) == 2
+    assert curr_map.get_height(Position(3,2)) == 0
+    assert curr_map.get_height(Position(4,2)) == 1
+    assert curr_map.get_height(Position(5,2)) == 0
     assert game_test.verify_correct_nr_player_units()
+
+
+def test_simulator_update():
+    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
+    game_test.update_loop_data_from_file()
+    simulator = GameSimulator()
+    simulator.copy_map(game_test.game.map)
+
+    assert len(simulator.map.cells) == len(game_test.game.map.cells)
+
+    simulator.map.cells[0][0].height = 4
+    simulator.map.cells[1][0].height = 4
+    simulator.map.cells[2][2].height = 4
+    simulator.map.size = 10
+
+    assert simulator.map.size is not game_test.game.map.size
+    assert (simulator.map.get_height(Position(0,0)) is not 
+            game_test.game.map.get_height(Position(0,0)))
+    assert (simulator.map.get_height(Position(0,1)) is not 
+            game_test.game.map.get_height(Position(0,1)))
+    assert (simulator.map.get_height(Position(2,2)) is not 
+            game_test.game.map.get_height(Position(2,2)))
+
     
 
 
