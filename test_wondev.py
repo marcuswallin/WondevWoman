@@ -45,7 +45,7 @@ def test_game_init():
     assert game.units_per_player == 0
 
 def test_file_init_game_simple():
-    game_test = GameTest("wondev_test_files/size6unit1.csv", "wondev_test_files/loop_size6unit1.csv")
+    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
     assert game_test.game.map.size == 6
     assert game_test.game.units_per_player == 1
 
@@ -55,8 +55,8 @@ def test_file_init_game_simple():
     assert curr_map.get_height(1,0) == 0
     assert curr_map.get_height(2,0) == 1
     assert curr_map.get_height(3,0) == 0
-    assert curr_map.get_height(4,0) == 0
-    assert curr_map.get_height(5,0) == 0
+    assert curr_map.get_height(4,0) == -1
+    assert curr_map.get_height(5,0) == -1
     assert curr_map.get_height(0,4) == 0
     assert curr_map.get_height(1,4) == 0
     assert curr_map.get_height(2,4) == 1
@@ -64,6 +64,38 @@ def test_file_init_game_simple():
     assert curr_map.get_height(4,4) == 2
     assert curr_map.get_height(5,4) == 0
     assert curr_map.get_height(5,5) == 0
+
+    assert game_test.game.me.nr_units == 1
+    assert game_test.game.opponent.nr_units == 1
+    assert game_test.game.me.units[0].x == 1
+    assert game_test.game.me.units[0].y == 1
+    
+    assert game_test.game.opponent.units[0].x == 2
+    assert game_test.game.opponent.units[0].y == 2
+
+
+def test_game_update():
+    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
+    assert game_test.game.map.size == 6
+    assert game_test.game.units_per_player == 1
+
+    game_test.update_loop_data_from_file()
+    curr_map = game_test.game.map
+    assert curr_map.get_height(0,2) == 0
+    assert curr_map.get_height(1,2) == 0
+    assert curr_map.get_height(2,2) == 1
+    assert curr_map.get_height(3,2) == 0
+    assert curr_map.get_height(4,2) == 0
+    assert curr_map.get_height(5,2) == 0
+
+    game_test.loop_input_file = "wondev_test_files/loop_size6unit1_2.txt"
+    game_test.update_loop_data_from_file()
+    assert curr_map.get_height(0,2) == 1
+    assert curr_map.get_height(1,2) == 0
+    assert curr_map.get_height(2,2) == 2
+    assert curr_map.get_height(3,2) == 0
+    assert curr_map.get_height(4,2) == 1
+    assert curr_map.get_height(5,2) == 0
 
 
 
