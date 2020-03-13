@@ -1,11 +1,22 @@
 import sys
 import math
 from array import array
+from enum import Enum
+
+class BuildDirection(Enum):
+    N = 1 
+
+class Position:
+    def __init__(self, init_x, init_y):
+        self.x = init_x
+        self.y = init_y
+    
+    def equal(self, pos):
+        return self.x == pos.x and self.y == pos.y
 
 class Cell:
-    def __init__(self, x, y, map_input):
-        self.x = x
-        self.y = y
+    def __init__(self, init_pos, map_input):
+        self.pos = init_pos
         self.height = self.convert_input_to_integer(map_input)
     
     def convert_input_to_integer(self, map_input):
@@ -20,16 +31,18 @@ class Cell:
     
 #TODO SMART WAY OF STORING ACTION VALUES
 class Action:
-    def __init__(self, action_type, unit_index, move_dir, build_dir):
-        self.action_type = action_type
+    def __init__(self, unit_index, move_dir, build_dir):
         self.unit_index = unit_index
         self.move_dir = move_dir
         self.build_dir = build_dir
 
+class MoveAndBuild(Action):
+  def __init__(self, unit_index, move_dir, build_dir):
+    super().__init__(unit_index, move_dir, build_dir)
+
 class Unit:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, init_pos):
+        self.pos = init_pos
 
 class Player:
     def __init__(self):
@@ -50,7 +63,7 @@ class Map:
             row = input().split()
             self.cells.append([])
             for x_index, cell_val in enumerate(row):
-                self.cells[y_index].append(Cell(x_index, y_index, cell_val))
+                self.cells[y_index].append(Cell(Position(x_index, y_index), cell_val))
     
     def print(self):
         for row in self.cells:
@@ -80,7 +93,7 @@ class Game:
     def read_player_data(self, player):
         for i in range(self.units_per_player):
             unit_x, unit_y = [int(j) for j in input().split()]
-            player.units.append(Unit(unit_x,unit_y))
+            player.units.append(Unit(Position(unit_x,unit_y)))
 
     def read_legal_actions(self):
         legal_actions = int(input())

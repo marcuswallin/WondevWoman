@@ -1,11 +1,16 @@
 import pytest
 import sys
-from wondevwoman import Cell, Game, Map
+from wondevwoman import Cell, Game, Map, Position
+
+def test_simple_position_init():
+    pos = Position(5, 3)
+    assert pos.x == 5
+    assert pos.y == 3
+    assert pos.equal(Position(5, 3))
 
 def test_simple_point_init():
-    cell = Cell(1,2,0)
-    assert cell.x == 1
-    assert cell.y == 2
+    cell = Cell(Position(1,2),0)
+    assert cell.pos.equal(Position(1, 2))
     assert cell.height == 0
 
 
@@ -67,11 +72,19 @@ def test_file_init_game_simple():
 
     assert game_test.game.me.nr_units == 1
     assert game_test.game.opponent.nr_units == 1
-    assert game_test.game.me.units[0].x == 1
-    assert game_test.game.me.units[0].y == 1
+    assert game_test.game.me.units[0].pos.equal(Position(1, 1))
     
-    assert game_test.game.opponent.units[0].x == 2
-    assert game_test.game.opponent.units[0].y == 2
+    assert game_test.game.opponent.units[0].pos.equal(Position(2, 2))
+
+def test_player_actions():
+    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
+    game_test.update_loop_data_from_file()
+
+    assert game_test.me.actions.index == 0
+    assert game_test.me.actions.move_dir == N 
+    assert game_test.me.actions.build_dir == S 
+    assert game_test.me.actions = MoveAndBuild(0, 'N', 'S')
+    MOVE&BUILD 0 N S
 
 
 def test_game_update():
