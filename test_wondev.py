@@ -1,7 +1,11 @@
 import pytest
 import sys
+<<<<<<< HEAD
 import random
 from wondevwoman import Cell, Game, Map, Position
+=======
+from wondevwoman import Cell, Game, Map, Position, Dir
+>>>>>>> 42c1c229ade98015e46b8e80f644d29b1172820d
 
 def test_simple_position_init():
     pos = Position(5, 3)
@@ -97,11 +101,10 @@ def test_player_actions():
     game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
     game_test.update_loop_data_from_file()
 
-    assert game_test.game.me.actions.index == 0
-    assert game_test.game.me.actions.move_dir == N 
-    assert game_test.game.me.actions.build_dir == S 
-   # assert game_test.me.actions = MoveAndBuild(0, 'N', 'S')
-   # MOVE&BUILD 0 N S
+    assert game_test.me.actions.index == 0
+    assert game_test.game.me.actions.move_dir == Dir.N 
+    assert game_test.game.me.actions.build_dir == Dir.S 
+    assert game_test.game.me.actions == MoveAndBuild(0, 'N', 'S')
 
 
 def test_game_update():

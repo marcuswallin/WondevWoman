@@ -4,8 +4,15 @@ import random
 from array import array
 from enum import Enum
 
-class BuildDirection(Enum):
-    N = 1 
+class Dir(Enum):
+    N = 1
+    NE = 2
+    E = 3 
+    SE = 4
+    S = 5 
+    SW = 6 
+    W = 7 
+    NW = 8 
 
 class Position:
     def __init__(self, init_x, init_y):
