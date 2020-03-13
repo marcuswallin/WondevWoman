@@ -1,12 +1,7 @@
 import pytest
 import sys
+import random
 from wondevwoman import Cell, Game, Map
-
-def test_simple_point_init():
-    cell = Cell(1,2,0)
-    assert cell.x == 1
-    assert cell.y == 2
-    assert cell.height == 0
 
 
 class GameTest:
@@ -37,6 +32,22 @@ class GameTest:
         stdin_ = sys.stdin
         self.game.read_game_data()
         sys.stdin = stdin_ 
+    
+    def verify_correct_nr_player_units(self):
+        units_equal_me = self.game.me.nr_units == len(self.game.me.units)
+        units_equal_opp = self.game.opponent.nr_units == len(self.game.opponent.units)
+        return units_equal_me and units_equal_opp
+
+    def new_game_loop(self, new_file):
+        self.game.clean_old_data()
+        self.loop_input_file = new_file
+        self.update_loop_data_from_file()
+
+def test_simple_point_init():
+    cell = Cell(1,2,0)
+    assert cell.x == 1
+    assert cell.y == 2
+    assert cell.height == 0
 
 
 def test_game_init():
@@ -87,15 +98,18 @@ def test_game_update():
     assert curr_map.get_height(3,2) == 0
     assert curr_map.get_height(4,2) == 0
     assert curr_map.get_height(5,2) == 0
+    assert game_test.verify_correct_nr_player_units()
 
-    game_test.loop_input_file = "wondev_test_files/loop_size6unit1_2.txt"
-    game_test.update_loop_data_from_file()
+    game_test.new_game_loop("wondev_test_files/loop_size6unit1_2.txt")
     assert curr_map.get_height(0,2) == 1
     assert curr_map.get_height(1,2) == 0
     assert curr_map.get_height(2,2) == 2
     assert curr_map.get_height(3,2) == 0
     assert curr_map.get_height(4,2) == 1
     assert curr_map.get_height(5,2) == 0
+    assert game_test.verify_correct_nr_player_units()
+    
+
 
 
 

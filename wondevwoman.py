@@ -1,5 +1,6 @@
 import sys
 import math
+import random
 from array import array
 
 class Cell:
@@ -35,17 +36,22 @@ class Player:
     def __init__(self):
         self.nr_units = 0
         self.units = []
+    
+    def clean(self):
+        self.units = []
 
 class Map:
     def __init__(self, size):
         self.size = size
         self.cells = []
+    
+    def clean(self):
+        self.cells = []
 
     def get_height(self, x, y):
         return self.cells[y][x].height
     
-    def throw_and_update_map_data(self):
-        self.cells = []
+    def update_data(self):
         for y_index in range(self.size):
             row = input().split()
             self.cells.append([])
@@ -72,7 +78,7 @@ class Game:
         self.opponent.nr_units = self.units_per_player
 
     def read_game_data(self):
-        self.read_map_data()
+        self.map.update_data()
         self.read_player_data(self.me)
         self.read_player_data(self.opponent)
         self.read_legal_actions()
@@ -88,16 +94,31 @@ class Game:
             atype, index, dir_1, dir_2 = input().split()
             index = int(index)
 
-    def read_map_data(self):
-        self.map.throw_and_update_map_data()
+    def clean_old_data(self):
+        self.me.clean()
+        self.opponent.clean()
+        self.map.clean()
+        #self.actionlist.clean()
+
+class GameSimulator:
+    
+    def return_random_valid_action(self, player):
+        try:
+            return random.choice(player.actions)
+        except IndexError:
+            print("I CAN NOT MOVE", file=sys.stderr)
+       #     return 
 
 
 def main():
     game = Game()
+    simulator = GameSimulator()
     game.read_start_input()
 
     while True:
+        game.clean_old_data()
         game.read_game_data()
+        action = simulator.return_random_valid_action(game.me)
         print("MOVE&BUILD 0 N S")
 
 if __name__ == '__main__':
