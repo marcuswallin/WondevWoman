@@ -1,6 +1,6 @@
 import pytest
 import sys
-from wondevwoman import Cell, Game, Map, Position
+from wondevwoman import Cell, Game, Map, Position, Dir
 
 def test_simple_position_init():
     pos = Position(5, 3)
@@ -81,10 +81,9 @@ def test_player_actions():
     game_test.update_loop_data_from_file()
 
     assert game_test.me.actions.index == 0
-    assert game_test.me.actions.move_dir == N 
-    assert game_test.me.actions.build_dir == S 
-    assert game_test.me.actions = MoveAndBuild(0, 'N', 'S')
-    MOVE&BUILD 0 N S
+    assert game_test.me.actions.move_dir == Dir.N 
+    assert game_test.me.actions.build_dir == Dir.S 
+    assert game_test.me.actions == MoveAndBuild(0, 'N', 'S')
 
 
 def test_game_update():
