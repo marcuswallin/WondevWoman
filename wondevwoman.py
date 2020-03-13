@@ -77,15 +77,10 @@ class Game:
         self.me.nr_units = self.units_per_player
         self.opponent.nr_units = self.units_per_player
 
-
-#TODO split function into smaller ones function
     def read_game_data(self):
         self.read_map_data()
-
-        #TODO currently dummy input, should be Player objects
         self.read_player_data(self.me)
         self.read_player_data(self.opponent)
-
         self.read_legal_actions()
 
     def read_player_data(self, player):
