@@ -49,9 +49,11 @@ class Player:
     def __init__(self):
         self.nr_units = 0
         self.units = []
+        self.actions = []
     
     def clean(self):
         self.units = []
+        self.actions = []
 
 class Map:
     def __init__(self, size):
@@ -111,7 +113,6 @@ class Game:
         self.me.clean()
         self.opponent.clean()
         self.map.clean()
-        #self.actionlist.clean()
 
 class GameSimulator:
     
