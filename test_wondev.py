@@ -179,6 +179,13 @@ def test_direction():
     NW = Direction("NW")
     assert NW.relative_movement.equal(Position(-1, -1))
 
+    p1 = Position(1,1)
+    p2 = Position(2,2)
+    assert p1.pos_in_direction(E).equal(Position(2,1))
+    assert p1.pos_in_direction(NW).equal(Position(0,0))
+    assert p2.pos_in_direction(SE).equal(Position(3,3))
+
+
 
 
     
