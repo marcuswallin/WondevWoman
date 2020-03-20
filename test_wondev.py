@@ -1,7 +1,7 @@
 import pytest
 import sys
 import random
-from wondevwoman import GameSimulator, Cell, Game, Map, Position, Dir, MoveAndBuild
+from wondevwoman import GameSimulator, Cell, Game, Map, Position, Direction, MoveAndBuild
 
 def test_simple_position_init():
     pos = Position(5, 3)
@@ -86,15 +86,6 @@ def test_file_init_game_simple():
     
     assert game_test.game.opponent.units[0].pos.equal(Position(2, 2))
 
-def test_player_actions():
-    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
-    game_test.update_loop_data_from_file()
-
-    assert game_test.game.me.actions[0].unit_index == 0
-    assert game_test.game.me.actions[0].move_dir == Dir.N 
-    assert game_test.game.me.actions[0].build_dir == Dir.S 
-    assert isinstance(game_test.game.me.actions[0], MoveAndBuild)
-
 
 def test_game_update():
     game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
@@ -133,6 +124,10 @@ def test_simulator_update():
     simulator.map.cells[1][0].height = 4
     simulator.map.cells[2][2].height = 4
     simulator.map.size = 10
+    assert simulator.map.get_height(Position(0, 0)) == 4
+    assert simulator.map.get_height(Position(4, 0)) == -1
+    assert simulator.map.get_height(Position(4, 4)) == 2
+
 
     assert simulator.map.size is not game_test.game.map.size
     assert (simulator.map.get_height(Position(0,0)) is not 
@@ -141,6 +136,50 @@ def test_simulator_update():
             game_test.game.map.get_height(Position(0,1)))
     assert (simulator.map.get_height(Position(2,2)) is not 
             game_test.game.map.get_height(Position(2,2)))
+
+
+def test_player_actions():
+    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
+    game_test.update_loop_data_from_file()
+
+    assert game_test.game.me.actions[0].unit_index == 0
+    assert game_test.game.me.actions[0].move_dir.relative_movement.equal(Position(0, -1)) 
+    assert game_test.game.me.actions[0].build_dir.relative_movement.equal(Position(0, 1))
+    assert isinstance(game_test.game.me.actions[0], MoveAndBuild)
+
+    assert game_test.game.me.actions[1].move_dir.relative_movement.equal(Position(1, -1)) 
+    assert game_test.game.me.actions[1].build_dir.relative_movement.equal(Position(-1, 1))
+
+    assert game_test.game.me.actions[2].move_dir.relative_movement.equal(Position(1, 0)) 
+    assert game_test.game.me.actions[2].build_dir.relative_movement.equal(Position(-1, -1))
+
+
+def test_direction():
+    N = Direction("N")
+    assert N.relative_movement .equal(Position(0, -1))
+    
+    NE = Direction("NE")
+    assert NE.relative_movement.equal(Position(1, -1))
+    
+    E = Direction("E")
+    assert E.relative_movement.equal(Position(1, 0))
+    
+    SE = Direction("SE")
+    assert SE.relative_movement.equal(Position(1, 1))
+    
+    S = Direction("S")
+    assert S.relative_movement.equal(Position(0, 1))
+    
+    SW = Direction("SW")
+    assert SW.relative_movement.equal(Position(-1, 1))
+
+    W = Direction("W")
+    assert W.relative_movement.equal(Position(-1, 0))
+    
+    NW = Direction("NW")
+    assert NW.relative_movement.equal(Position(-1, -1))
+
+
 
     
 

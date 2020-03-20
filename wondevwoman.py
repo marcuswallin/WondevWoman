@@ -5,38 +5,33 @@ import copy
 from array import array
 from enum import Enum
 
-#TODO change inte 2D enums
-class Dir(Enum):
-    N = 1
-    NE = 2
-    E = 3 
-    SE = 4
-    S = 5 
-    SW = 6 
-    W = 7 
-    NW = 8
+
+class Direction():
+
+    def __init__(self, direction: str):
+        self.name = direction
+        self.relative_movement = self.convert_direction_string_to_point(direction)
     
     def to_string(self):
         return self.name
 
-    @classmethod
-    def convert_direction_string_to_enum(cls, direction):
+    def convert_direction_string_to_point(cls, direction):
         if direction == 'N':
-            return_dir = cls.N
+            return_dir = Position(0, -1)
         elif direction == 'NE':
-            return_dir = cls.NE
+            return_dir =  Position(1, -1)
         elif direction == 'E':
-            return_dir = cls.E
+            return_dir =  Position(1, 0)
         elif direction == 'SE':
-            return_dir = cls.SE
+            return_dir =  Position(1, 1)
         elif direction == 'S':
-            return_dir = cls.S
+            return_dir =  Position(0, 1)
         elif direction == 'SW':
-            return_dir = cls.SW
+            return_dir =  Position(-1, 1)
         elif direction == 'W':
-            return_dir = cls.W
-        else:
-            return_dir = cls.NW
+            return_dir =  Position(-1, 0)
+        elif direction == 'NW':
+            return_dir = Position(-1, -1)
         return return_dir
 
 
@@ -47,11 +42,16 @@ class Position:
     
     def equal(self, pos):
         return self.x == pos.x and self.y == pos.y
+    
+    def to_string(self):
+        return f'{self.x} {self.y}'
+
 
 class Cell:
     def __init__(self, init_pos, map_input):
         self.pos = init_pos
         self.height = self.convert_input_to_integer(map_input)
+        self.description = map_input
     
     def convert_input_to_integer(self, map_input):
         try:
@@ -63,12 +63,12 @@ class Cell:
     def is_walkable(self):
         return self.height >= 0
     
-#TODO SMART WAY OF STORING ACTION VALUES
+
 class Action:
     def __init__(self, unit_index, move_dir, build_dir):
         self.unit_index = int(unit_index)
-        self.move_dir = Dir.convert_direction_string_to_enum(move_dir)
-        self.build_dir = Dir.convert_direction_string_to_enum(build_dir)
+        self.move_dir = Direction(move_dir)
+        self.build_dir = Direction(build_dir)
 
 
 class MoveAndBuild(Action):
@@ -85,6 +85,7 @@ class Unit:
     def __init__(self, init_pos):
         self.pos = init_pos
 
+
 class Player:
     def __init__(self):
         self.nr_units = 0
@@ -95,6 +96,7 @@ class Player:
         self.units = []
         self.actions = []
 
+
 class Map:
     def __init__(self, size):
         self.size = size
@@ -104,11 +106,13 @@ class Map:
         self.cells = []
 
     def get_height(self, position):
+        #print(position.to_string(), file=sys.stderr)
+        self.print()
         return self.cells[position.y][position.x].height
     
     def update_data(self):
         for y_index in range(self.size):
-            row = input().split()
+            row = list(input())
             self.cells.append([])
             for x_index, cell_val in enumerate(row):
                 self.cells[y_index].append(Cell(Position(x_index, y_index), cell_val))
@@ -116,8 +120,9 @@ class Map:
     def print(self):
         for row in self.cells:
             for cell in row:
-                print(cell, end = ' ', file=sys.stderr)
+                print(cell.description, end = ' ', file=sys.stderr)
             print("", file=sys.stderr)
+
 
 class Game:
     def __init__(self):
@@ -156,6 +161,7 @@ class Game:
         self.opponent.clean()
         self.map.clean()
 
+
 class GameSimulator:
     
     def __init__(self):
@@ -168,14 +174,11 @@ class GameSimulator:
             self.map.cells.append([])
             for cell in row:
                 self.map.cells[y].append(copy.deepcopy(cell))  
-
-
     
     def move_up_or_random(self, player):
-        current_height = self.map.get_height(player.units[0].position)
+        current_height = self.map.get_height(player.units[0].pos)
 
         return random.choice(player.actions)
-
 
 
 def main():
