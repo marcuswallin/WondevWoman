@@ -49,8 +49,7 @@ class Game:
         for i in range(legal_actions):
             atype, index, dir_1, dir_2 = input().split()
             index = int(index)
-            if atype == "MOVE&BUILD":
-                self.me.actions.append(MoveAndBuild(index, dir_1, dir_2))
+            self.me.add_action(atype, index, dir_1, dir_2)
 
     def clean_old_data(self):
         self.me.clean()
@@ -108,11 +107,9 @@ class Player:
     def __init__(self):
         self.nr_units = 0
         self.units = []
-        self.actions = []
 
     def clean(self):
         self.units = []
-        self.actions = []
 
     def get_action_with_highest_pos(self, map):
         highest_cell = None
@@ -123,6 +120,11 @@ class Player:
                 highest_cell = move_to_cell
                 best_action = action
         return best_action
+
+    def add_action(self, atype, index, dir_1, dir_2):
+        if atype == "MOVE&BUILD":
+            self.units[index].actions.append(MoveAndBuild(index, dir_1, dir_2))
+
 
 
 class Direction():
@@ -213,6 +215,7 @@ class MoveAndBuild(Action):
 class Unit:
     def __init__(self, init_pos):
         self.pos = init_pos
+        self.actions = []
 
 
 if __name__ == '__main__':

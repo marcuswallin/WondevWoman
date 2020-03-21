@@ -17,7 +17,7 @@ def test_simple_point_init():
 
 class GameTest:
     def __init__(self, start_input_file, loop_input_file):
-        self.start_input_file = start_input_file 
+        self.start_input_file = start_input_file
         self.loop_input_file = loop_input_file
         self.init_game_from_file()
 
@@ -25,12 +25,12 @@ class GameTest:
         self.game = Game()
         self.insert_data_from_file_to_instream(self.start_input_file)
         self.read_game_data()
-        
+
     def read_game_data(self):
         stdin_ = sys.stdin
         self.game.read_start_input()
-        sys.stdin = stdin_ 
-    
+        sys.stdin = stdin_
+
     def update_loop_data_from_file(self):
         self.insert_data_from_file_to_instream(self.loop_input_file)
         self.read_loop_data_from_stream()
@@ -42,8 +42,8 @@ class GameTest:
     def read_loop_data_from_stream(self):
         stdin_ = sys.stdin
         self.game.read_game_data()
-        sys.stdin = stdin_ 
-    
+        sys.stdin = stdin_
+
     def verify_correct_nr_player_units(self):
         units_equal_me = self.game.me.nr_units == len(self.game.me.units)
         units_equal_opp = self.game.opponent.nr_units == len(self.game.opponent.units)
@@ -83,7 +83,7 @@ def test_file_init_game_simple():
     assert game_test.game.me.nr_units == 1
     assert game_test.game.opponent.nr_units == 1
     assert game_test.game.me.units[0].pos.equal(Position(1, 1))
-    
+
     assert game_test.game.opponent.units[0].pos.equal(Position(2, 2))
 
 
@@ -130,11 +130,11 @@ def test_simulator_update():
 
 
     assert simulator.map.size is not game_test.game.map.size
-    assert (simulator.map.get_height(Position(0,0)) is not 
+    assert (simulator.map.get_height(Position(0,0)) is not
             game_test.game.map.get_height(Position(0,0)))
-    assert (simulator.map.get_height(Position(0,1)) is not 
+    assert (simulator.map.get_height(Position(0,1)) is not
             game_test.game.map.get_height(Position(0,1)))
-    assert (simulator.map.get_height(Position(2,2)) is not 
+    assert (simulator.map.get_height(Position(2,2)) is not
             game_test.game.map.get_height(Position(2,2)))
 
 
@@ -142,40 +142,44 @@ def test_player_actions():
     game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1.txt")
     game_test.update_loop_data_from_file()
 
-    assert game_test.game.me.actions[0].unit_index == 0
-    assert game_test.game.me.actions[0].move_dir.relative_movement.equal(Position(0, -1)) 
-    assert game_test.game.me.actions[0].build_dir.relative_movement.equal(Position(0, 1))
-    assert isinstance(game_test.game.me.actions[0], MoveAndBuild)
+    assert len(game_test.game.me.units[0].actions) == 4
 
-    assert game_test.game.me.actions[1].move_dir.relative_movement.equal(Position(1, -1)) 
-    assert game_test.game.me.actions[1].build_dir.relative_movement.equal(Position(-1, 1))
+    first_action = game_test.game.me.units[0].actions[0]
+    assert first_action.move_dir.relative_movement.equal(Position(0, -1))
+    assert first_action.build_dir.relative_movement.equal(Position(0, 1))
+    assert isinstance(first_action, MoveAndBuild)
 
-    assert game_test.game.me.actions[2].move_dir.relative_movement.equal(Position(1, 0)) 
-    assert game_test.game.me.actions[2].build_dir.relative_movement.equal(Position(-1, -1))
+    second_action = game_test.game.me.units[0].actions[1]
+    assert second_action.move_dir.relative_movement.equal(Position(1, -1))
+    assert second_action.build_dir.relative_movement.equal(Position(-1, 1))
+
+    third_action = game_test.game.me.units[0].actions[2]
+    assert third_action.move_dir.relative_movement.equal(Position(1, 0))
+    assert third_action.build_dir.relative_movement.equal(Position(-1, -1))
 
 
 def test_direction():
     N = Direction("N")
     assert N.relative_movement .equal(Position(0, -1))
-    
+
     NE = Direction("NE")
     assert NE.relative_movement.equal(Position(1, -1))
-    
+
     E = Direction("E")
     assert E.relative_movement.equal(Position(1, 0))
-    
+
     SE = Direction("SE")
     assert SE.relative_movement.equal(Position(1, 1))
-    
+
     S = Direction("S")
     assert S.relative_movement.equal(Position(0, 1))
-    
+
     SW = Direction("SW")
     assert SW.relative_movement.equal(Position(-1, 1))
 
     W = Direction("W")
     assert W.relative_movement.equal(Position(-1, 0))
-    
+
     NW = Direction("NW")
     assert NW.relative_movement.equal(Position(-1, -1))
 
@@ -188,7 +192,6 @@ def test_direction():
 
 
 
-    
 
 
 
@@ -200,4 +203,4 @@ def test_direction():
 
 
 
- 
+
