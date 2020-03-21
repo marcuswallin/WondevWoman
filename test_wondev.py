@@ -144,14 +144,14 @@ def test_player_actions():
 
     assert game_test.game.me.actions[0].unit_index == 0
     assert game_test.game.me.actions[0].move_dir.relative_movement.equal(Position(0, -1)) 
-    assert game_test.game.me.actions[0].build_dir.relative_movement.equal(Position(0, 1))
+    assert game_test.game.me.actions[0].act_dir.relative_movement.equal(Position(0, 1))
     assert isinstance(game_test.game.me.actions[0], MoveAndBuild)
 
     assert game_test.game.me.actions[1].move_dir.relative_movement.equal(Position(1, -1)) 
-    assert game_test.game.me.actions[1].build_dir.relative_movement.equal(Position(-1, 1))
+    assert game_test.game.me.actions[1].act_dir.relative_movement.equal(Position(-1, 1))
 
     assert game_test.game.me.actions[2].move_dir.relative_movement.equal(Position(1, 0)) 
-    assert game_test.game.me.actions[2].build_dir.relative_movement.equal(Position(-1, -1))
+    assert game_test.game.me.actions[2].act_dir.relative_movement.equal(Position(-1, -1))
 
 
 def test_direction():

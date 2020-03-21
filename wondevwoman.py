@@ -108,21 +108,9 @@ class Player:
     def __init__(self):
         self.nr_units = 0
         self.units = []
-        self.actions = []
 
     def clean(self):
         self.units = []
-        self.actions = []
-
-    def get_action_with_highest_pos(self, map):
-        highest_cell = None
-        best_action = None
-        for action in self.actions:
-            move_to_cell = map.get_cell(self.units[0].pos.pos_in_direction(action.move_dir))
-            if move_to_cell > highest_cell:
-                highest_cell = move_to_cell
-                best_action = action
-        return best_action
 
 
 class Direction():
@@ -194,25 +182,44 @@ class Cell:
 
 
 class Action:
-    def __init__(self, unit_index, move_dir, build_dir):
+    def __init__(self, unit_index, move_dir, act_dir):
         self.unit_index = int(unit_index)
         self.move_dir = Direction(move_dir)
-        self.build_dir = Direction(build_dir)
+        self.act_dir = Direction(act_dir)
+
+    def action_to_string(self):
+        return f'{self.unit_index} {self.move_dir.to_string()} {self.act_dir.to_string()}'
 
 
 class MoveAndBuild(Action):
-    def __init__(self, unit_index, move_dir, build_dir):
-        super().__init__(unit_index, move_dir, build_dir)
+    def __init__(self, unit_index, move_dir, act_dir):
+        super().__init__(unit_index, move_dir, act_dir)
 
     #I feel like this is unnecessary duplication
     def to_string(self):
-        return f'MOVE&BUILD {self.unit_index} ' + \
-        f'{self.move_dir.to_string()} {self.build_dir.to_string()}'
+        return f'MOVE&BUILD {self.action_to_string()}'
 
+class PushAndBuild(Action):
+    def __init__(self, unit_index, move_dir, act_dir):
+       super().__init__(unit_index, move_dir, act_dir)
+
+    def to_string(self):
+        return f'PUSH&BUILD {self.action_to_string()}'
 
 class Unit:
     def __init__(self, init_pos):
         self.pos = init_pos
+        self.actions = []
+
+    def get_action_with_highest_pos(self, map):
+        highest_cell = None
+        best_action = None
+        for action in self.actions:
+            move_to_cell = map.get_cell(self.units[0].pos.pos_in_direction(action.move_dir))
+            if move_to_cell > highest_cell:
+                highest_cell = move_to_cell
+                best_action = action
+        return best_action
 
 
 if __name__ == '__main__':
