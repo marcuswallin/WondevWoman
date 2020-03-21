@@ -117,6 +117,10 @@ class Player:
         if atype == "PUSH&BUILD":
             self.units[index].actions.append(PushAndBuild(index, dir_1, dir_2))
 
+    def get_action_with_highest_pos(self, map):
+        best_unit = max(self.units, key=lambda unit: len(unit.actions))
+        return best_unit.get_action_with_highest_pos(map)
+
 
 class Direction():
 
@@ -219,7 +223,7 @@ class Unit:
         highest_cell = None
         best_action = None
         for action in self.actions:
-            move_to_cell = map.get_cell(self.units[0].pos.pos_in_direction(action.move_dir))
+            move_to_cell = map.get_cell(self.pos.pos_in_direction(action.move_dir))
             if move_to_cell > highest_cell:
                 highest_cell = move_to_cell
                 best_action = action
