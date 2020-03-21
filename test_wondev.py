@@ -1,7 +1,8 @@
 import pytest
 import sys
 import random
-from wondevwoman import GameSimulator, Cell, Game, Map, Position, Direction, MoveAndBuild
+from wondevwoman import GameSimulator, Cell, Game, Map, Position, \
+                        Direction, MoveAndBuild, PushAndBuild
 
 def test_simple_position_init():
     pos = Position(5, 3)
@@ -146,16 +147,25 @@ def test_player_actions():
 
     first_action = game_test.game.me.units[0].actions[0]
     assert first_action.move_dir.relative_movement.equal(Position(0, -1))
-    assert first_action.build_dir.relative_movement.equal(Position(0, 1))
+    assert first_action.act_dir.relative_movement.equal(Position(0, 1))
     assert isinstance(first_action, MoveAndBuild)
 
     second_action = game_test.game.me.units[0].actions[1]
     assert second_action.move_dir.relative_movement.equal(Position(1, -1))
-    assert second_action.build_dir.relative_movement.equal(Position(-1, 1))
+    assert second_action.act_dir.relative_movement.equal(Position(-1, 1))
 
     third_action = game_test.game.me.units[0].actions[2]
     assert third_action.move_dir.relative_movement.equal(Position(1, 0))
-    assert third_action.build_dir.relative_movement.equal(Position(-1, -1))
+    assert third_action.act_dir.relative_movement.equal(Position(-1, -1))
+
+
+    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1_action2.txt")
+    game_test.update_loop_data_from_file()
+
+    assert isinstance(game_test.game.me.units[0].actions[0], PushAndBuild)
+    assert isinstance(game_test.game.me.units[0].actions[1], MoveAndBuild)
+    assert isinstance(game_test.game.me.units[0].actions[2], PushAndBuild)
+    assert isinstance(game_test.game.me.units[0].actions[3], MoveAndBuild)
 
 
 def test_direction():
@@ -189,18 +199,15 @@ def test_direction():
     assert p1.pos_in_direction(NW).equal(Position(0,0))
     assert p2.pos_in_direction(SE).equal(Position(3,3))
 
+def test_two_units():
+    game_test = GameTest("wondev_test_files/size6unit2.txt", "wondev_test_files/loop_unit2.txt")
+    game_test.update_loop_data_from_file()
+    unit1 = game_test.game.me.units[0]
+    unit2 = game_test.game.me.units[1]
+    assert isinstance(unit1.actions[0], PushAndBuild)
+    assert isinstance(unit1.actions[1], MoveAndBuild)
+    assert isinstance(unit2.actions[0], MoveAndBuild)
+    assert isinstance(unit2.actions[1], PushAndBuild)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    assert unit1.actions[2].to_string() == "MOVE&BUILD 0 N S"
+    assert unit2.actions[1].to_string() == "PUSH&BUILD 1 N S"
