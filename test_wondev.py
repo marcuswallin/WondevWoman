@@ -153,6 +153,14 @@ def test_player_actions():
     assert game_test.game.me.actions[2].move_dir.relative_movement.equal(Position(1, 0)) 
     assert game_test.game.me.actions[2].act_dir.relative_movement.equal(Position(-1, -1))
 
+    game_test = GameTest("wondev_test_files/size6unit1.txt", "wondev_test_files/loop_size6unit1_action2.txt")
+    game_test.update_loop_data_from_file()
+
+    assert isinstance(game_test.game.me.units[0].actions[0], PushAndBuild)
+    assert isinstance(game_test.game.me.units[0].actions[1], MoveAndBuild)
+    assert isinstance(game_test.game.me.units[0].actions[2], PushAndBuild)
+    assert isinstance(game_test.game.me.units[0].actions[3], MoveAndBuild)
+
 
 def test_direction():
     N = Direction("N")
