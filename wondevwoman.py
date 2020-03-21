@@ -49,8 +49,7 @@ class Game:
         for i in range(legal_actions):
             atype, index, dir_1, dir_2 = input().split()
             index = int(index)
-            if atype == "MOVE&BUILD":
-                self.me.actions.append(MoveAndBuild(index, dir_1, dir_2))
+            self.me.add_action(atype, index, dir_1, dir_2)
 
     def clean_old_data(self):
         self.me.clean()
@@ -111,6 +110,11 @@ class Player:
 
     def clean(self):
         self.units = []
+
+    def add_action(self, atype, index, dir_1, dir_2):
+        if atype == "MOVE&BUILD":
+            self.units[index].actions.append(MoveAndBuild(index, dir_1, dir_2))
+
 
 
 class Direction():
