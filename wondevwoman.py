@@ -114,6 +114,8 @@ class Player:
     def add_action(self, atype, index, dir_1, dir_2):
         if atype == "MOVE&BUILD":
             self.units[index].actions.append(MoveAndBuild(index, dir_1, dir_2))
+        if atype == "PUSH&BUILD":
+            self.units[index].actions.append(PushAndBuild(index, dir_1, dir_2))
 
 
 
@@ -199,7 +201,6 @@ class MoveAndBuild(Action):
     def __init__(self, unit_index, move_dir, act_dir):
         super().__init__(unit_index, move_dir, act_dir)
 
-    #I feel like this is unnecessary duplication
     def to_string(self):
         return f'MOVE&BUILD {self.action_to_string()}'
 
